@@ -42,6 +42,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <camel.version>2.15.0</camel.version>
+        <consumers.filename>camel-spring-consumers-${camel.version}.xsd</consumers.filename>
+        <producers.filename>camel-spring-producers-${camel.version}.xsd</producers.filename>
     </properties>
 
     <dependencies>
@@ -86,12 +88,12 @@
                                 <schema>
                                     <uri>http://camel.apache.org/schema/spring/consumers</uri>
                                     <toPrefix>consumer</toPrefix>
-                                    <toFile>camel-spring-consumers-${camel.version}.xsd</toFile>
+                                    <toFile>${consumers.filename}</toFile>
                                 </schema>
                                 <schema>
                                     <uri>http://camel.apache.org/schema/spring/producers</uri>
                                     <toPrefix>producer</toPrefix>
-                                    <toFile>camel-spring-producers-${camel.version}.xsd</toFile>
+                                    <toFile>${producers.filename}</toFile>
                                 </schema>
                                 <schema>
                                     <uri>http://camel.apache.org/schema/spring</uri>
@@ -99,6 +101,37 @@
                                     <toFile>camel-spring.xsd</toFile>
                                 </schema>
                             </transformSchemas>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>xml-maven-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <id>Add 'substitutionGroup' attribute to elements</id>
+                        <goals>
+                            <goal>transform</goal>
+                        </goals>
+                        <configuration>
+                            <transformationSets>
+                                <transformationSet>
+                                    <dir>${project.build.directory}/generated-resources/schemagen</dir>
+                                    <includes>
+                                        <include>${consumers.filename}</include>
+                                    </includes>
+                                    <stylesheet>src/main/xslt/consumers-substitution-group.xsl</stylesheet>
+                                </transformationSet>
+                                <transformationSet>
+                                    <dir>${project.build.directory}/generated-resources/schemagen</dir>
+                                    <includes>
+                                        <include>${producers.filename}</include>
+                                    </includes>
+                                    <stylesheet>src/main/xslt/producers-substitution-group.xsl</stylesheet>
+                                </transformationSet>
+                            </transformationSets>
                         </configuration>
                     </execution>
                 </executions>
