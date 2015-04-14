@@ -123,6 +123,7 @@
                                         <include>${consumers.filename}</include>
                                     </includes>
                                     <stylesheet>src/main/xslt/consumers-substitution-group.xsl</stylesheet>
+                                    <outputDir>${project.build.outputDirectory}</outputDir>
                                 </transformationSet>
                                 <transformationSet>
                                     <dir>${project.build.directory}/generated-resources/schemagen</dir>
@@ -130,6 +131,7 @@
                                         <include>${producers.filename}</include>
                                     </includes>
                                     <stylesheet>src/main/xslt/producers-substitution-group.xsl</stylesheet>
+                                    <outputDir>${project.build.outputDirectory}</outputDir>
                                 </transformationSet>
                             </transformationSets>
                         </configuration>
