@@ -41,11 +41,11 @@ public class FileDefinition {
         @XmlAttribute(required = true)
         private String directory;
         @XmlAttribute
-        private boolean autoCreate;
+        private Boolean autoCreate;
         @XmlAttribute
-        private int bufferSize;
+        private Integer bufferSize;
         @XmlAttribute
-        private boolean delete;
+        private Boolean delete;
 
         @Override
         public String getUri() {
@@ -82,9 +82,9 @@ public class FileDefinition {
         @XmlAttribute(required = true)
         private String directory;
         @XmlAttribute
-        private boolean autoCreate;
+        private Boolean autoCreate;
         @XmlAttribute
-        private int bufferSize;
+        private Integer bufferSize;
         @XmlAttribute
         private FileExistStrategy fileExist;
 

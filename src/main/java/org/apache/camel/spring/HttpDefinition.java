@@ -15,7 +15,6 @@
  */
 package org.apache.camel.spring;
 
-import com.sun.xml.bind.XmlAccessorFactory;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -41,7 +40,7 @@ public class HttpDefinition {
         @XmlAttribute(required = true)
         protected String url;
         @XmlAttribute
-        protected boolean disableStreamCache;
+        protected Boolean disableStreamCache;
 
         @Override
         public String getUri() {
