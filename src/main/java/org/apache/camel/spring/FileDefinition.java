@@ -52,16 +52,6 @@ public class FileDefinition {
 
             return sb.toString();
         }
-
-        @Override
-        public void setRef(String ref) {
-            throw new UnsupportedOperationException("'ref' is read-only property");
-        }
-
-        @Override
-        public void setUri(String uri) {
-            throw new UnsupportedOperationException("'uri' is read-only property");
-        }
     }
 
     @XmlRootElement(name = LOCAL_NAME, namespace = NamespaceUri.PRODUCERS)
@@ -81,16 +71,6 @@ public class FileDefinition {
         @Override
         public String getUri() {
             return "file://" + directory;
-        }
-
-        @Override
-        public void setRef(String ref) {
-            throw new UnsupportedOperationException("'ref' is read-only property");
-        }
-
-        @Override
-        public void setUri(String uri) {
-            throw new UnsupportedOperationException("'uri' is read-only property");
         }
     }
 }
