@@ -33,25 +33,32 @@ public class HttpDefinition {
     @XmlRootElement(name = ToHttpDefinition.LOCAL_NAME, namespace = NamespaceUri.PRODUCERS)
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(namespace = NamespaceUri.PRODUCERS)
-    public static class ToHttpDefinition extends ToDefinition {
+    public static final class ToHttpDefinition extends ToDefinition {
 
         private static final String LOCAL_NAME = "http";
 
+        /**
+         * E.g.
+         * <ul>
+         * <li>http://example.org</li>
+         * <li>https://example.org</li>
+         * <li>http://example.org:80</li>
+         * <li>https://example.org:443/path</li>
+         * </ul>
+         */
         @XmlAttribute(required = true)
-        protected String url;
+        private String url;
         @XmlAttribute
-        protected Boolean disableStreamCache;
+        private Boolean disableStreamCache;
 
         @Override
         public String getUri() {
-            StringBuilder sb = new StringBuilder(getProtocol()).append("://");
-            sb.append(url);
+            StringBuilder sb = new StringBuilder(url);
+            if (disableStreamCache != null) {
+                sb.append("disableStreamCache=").append(disableStreamCache);
+            }
 
             return sb.toString();
-        }
-
-        protected String getProtocol() {
-            return LOCAL_NAME;
         }
 
         @Override
@@ -62,20 +69,6 @@ public class HttpDefinition {
         @Override
         public void setUri(String uri) {
             throw new UnsupportedOperationException("'uri' is read-only property");
-        }
-
-    }
-
-    @XmlRootElement(name = ToHttpsDefinition.LOCAL_NAME, namespace = NamespaceUri.PRODUCERS)
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(namespace = NamespaceUri.PRODUCERS)
-    public static final class ToHttpsDefinition extends ToHttpDefinition {
-
-        private static final String LOCAL_NAME = "https";
-
-        @Override
-        protected String getProtocol() {
-            return LOCAL_NAME;
         }
 
     }
