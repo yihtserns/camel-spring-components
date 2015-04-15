@@ -41,18 +41,15 @@ public class FileDefinition {
         @XmlAttribute(required = true)
         private String directory;
         @XmlAttribute
-        private Boolean autoCreate;
-        @XmlAttribute
-        private Integer bufferSize;
-        @XmlAttribute
         private Boolean delete;
 
         @Override
         public String getUri() {
             StringBuilder sb = new StringBuilder("file://").append(directory);
-            if (autoCreate != null) {
-                sb.append("autoCreate").append(autoCreate);
+            if (delete != null) {
+                sb.append("?delete=").append(delete);
             }
+
             return sb.toString();
         }
 
@@ -80,21 +77,10 @@ public class FileDefinition {
 
         @XmlAttribute(required = true)
         private String directory;
-        @XmlAttribute
-        private Boolean autoCreate;
-        @XmlAttribute
-        private Integer bufferSize;
-        @XmlAttribute
-        private FileExistStrategy fileExist;
 
         @Override
         public String getUri() {
-            StringBuilder sb = new StringBuilder("file://");
-            sb.append(directory);
-            if (autoCreate) {
-                sb.append("autoCreate").append(autoCreate);
-            }
-            return sb.toString();
+            return "file://" + directory;
         }
 
         @Override

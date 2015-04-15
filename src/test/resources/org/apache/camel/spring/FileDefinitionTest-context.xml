@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:from="http://camel.apache.org/schema/spring/consumers"
+       xmlns:to="http://camel.apache.org/schema/spring/producers"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+            http://camel.apache.org/schema/spring/consumers camel-spring-consumers-2.15.0.xsd
+            http://camel.apache.org/schema/spring/producers camel-spring-producers-2.15.0.xsd
+">
+
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct:start"/>
+            <to:file directory="target/FileDefinitionTest"/>
+        </route>
+
+        <route>
+            <from:file directory="target/FileDefinitionTest" delete="true"/>
+            <to uri="mock:end"/>
+        </route>
+    </camelContext>
+
+</beans>
