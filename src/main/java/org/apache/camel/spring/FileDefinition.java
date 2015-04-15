@@ -49,9 +49,8 @@ public class FileDefinition {
 
         @Override
         public String getUri() {
-            StringBuilder sb = new StringBuilder("file://");
-            sb.append(directory);
-            if (autoCreate) {
+            StringBuilder sb = new StringBuilder("file://").append(directory);
+            if (autoCreate != null) {
                 sb.append("autoCreate").append(autoCreate);
             }
             return sb.toString();
