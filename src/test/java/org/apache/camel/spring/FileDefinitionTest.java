@@ -15,14 +15,12 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -37,8 +35,6 @@ public class FileDefinitionTest {
     private ProducerTemplate startTemplate;
     @EndpointInject(uri = "mock:end")
     private MockEndpoint resultEndpoint;
-    @Autowired
-    CamelContext ctx;
 
     @Test
     public void canUseToFileAndFromFileDefinition() throws Exception {
