@@ -31,6 +31,11 @@ import javax.xml.bind.annotation.XmlTransient;
 class UriBuilder {
 
     /**
+     * @see XmlAttribute#name()
+     */
+    private static final String DEFAULT_ATTRIBUTE_NAME = "##default";
+
+    /**
      * Using TreeMap for more predictable query param order - easier to assert.
      */
     private Map<String, String> queryKey2Value = new TreeMap<String, String>();
@@ -58,13 +63,24 @@ class UriBuilder {
                     // query params are optional; a required attribute wouldn't be a query param
                     continue;
                 }
-                addQueryParam(field.getName(), field.get(instance));
+                String queryParamName = hasCustomName(attribute) ? attribute.name() : field.getName();
+                Object queryParamValue = field.get(instance);
+
+                addQueryParam(queryParamName, queryParamValue);
             }
         } catch (IllegalAccessException ex) {
             throw new RuntimeException(ex);
         }
 
         return this;
+    }
+
+    /**
+     * @param attribute to be checked
+     * @return {@code false} if {@link XmlAttribute#name()} is {@value #DEFAULT_ATTRIBUTE_NAME}, {@code true} otherwise
+     */
+    private boolean hasCustomName(XmlAttribute attribute) {
+        return !DEFAULT_ATTRIBUTE_NAME.equals(attribute.name());
     }
 
     @Override

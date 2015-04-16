@@ -104,6 +104,25 @@ public class UriBuilderTest {
         assertThat(uri, is("direct:start?count=100&value=My Val"));
     }
 
+    @Test
+    public void shouldUseCustomXmlAttributeNameAsQueryParamKeyIfAvailable() throws Exception {
+        String xml = "<jaxbClassWithAttributeName xmlns=\"http://example.org/jaxb\""
+                + " id=\"My Val\""
+                + " count=\"100\""
+                + "/>";
+
+        Class<JaxbClassWithAttributeName> jaxbType = JaxbClassWithAttributeName.class;
+        JaxbClassWithAttributeName instance = jaxbType.cast((JAXBContext.newInstance(jaxbType))
+                .createUnmarshaller()
+                .unmarshal(new StringReader(xml)));
+
+        String uri = new UriBuilder("direct", "start")
+                .addQueryParamFromDeclaredFields(instance)
+                .toString();
+        assertThat(uri, is("direct:start?count=100&id=My Val"));
+
+    }
+
     @XmlRootElement(namespace = "http://example.org/jaxb")
     private static final class JaxbClass {
 
@@ -119,6 +138,15 @@ public class UriBuilderTest {
         @XmlAttribute(required = true)
         Boolean valid;
         @XmlAttribute
+        String value;
+        @XmlAttribute
+        Integer count;
+    }
+
+    @XmlRootElement(namespace = "http://example.org/jaxb")
+    private static final class JaxbClassWithAttributeName {
+
+        @XmlAttribute(name = "id")
         String value;
         @XmlAttribute
         Integer count;

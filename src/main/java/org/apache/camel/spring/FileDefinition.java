@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ToDefinition;
 
@@ -37,6 +38,12 @@ public class FileDefinition {
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(namespace = NamespaceUri.CONSUMERS)
     public static final class FromFileDefinition extends FromDefinition {
+
+        @XmlType(namespace = NamespaceUri.CONSUMERS)
+        public enum ReadLock {
+
+            none, markerFile, fileLock, rename, changed
+        }
 
         @XmlAttribute(required = true)
         String directory;
@@ -61,7 +68,91 @@ public class FileDefinition {
         @XmlAttribute
         Boolean useFixedDelay;
         @XmlAttribute
+        LoggingLevel runLoggingLevel;
+        @XmlAttribute
+        Boolean recursive;
+        @XmlAttribute
         Boolean delete;
+        @XmlAttribute
+        Boolean noop;
+        @XmlAttribute
+        String preMove;
+        @XmlAttribute
+        String move;
+        @XmlAttribute
+        String moveFailed;
+        @XmlAttribute
+        String include;
+        @XmlAttribute
+        String exclude;
+        @XmlAttribute
+        String antInclude;
+        @XmlAttribute
+        String antExclude;
+        @XmlAttribute
+        Boolean antFilterCaseSensitive;
+        @XmlAttribute
+        Boolean idempotent;
+        @XmlAttribute
+        String idempotentKey;
+        @XmlAttribute
+        String idempotentRepository;
+        @XmlAttribute
+        String inProgressRepository;
+        @XmlAttribute
+        String filter;
+        @XmlAttribute
+        String sorter;
+        @XmlAttribute
+        String sortBy;
+        @XmlAttribute
+        ReadLock readLock;
+        @XmlAttribute
+        Integer readLockTimeout;
+        @XmlAttribute
+        Integer readLockCheckInterval;
+        @XmlAttribute
+        Integer readLockMinLength;
+        @XmlAttribute
+        Integer readLockMinAge;
+        @XmlAttribute
+        LoggingLevel readLockLoggingLevel;
+        @XmlAttribute
+        Boolean readLockMarkerFile;
+        @XmlAttribute
+        Boolean directoryMustExist;
+        @XmlAttribute
+        String doneFileName;
+        @XmlAttribute
+        String exclusiveReadLockStrategy;
+        @XmlAttribute
+        Integer maxMessagesPerPoll;
+        @XmlAttribute
+        Boolean eagerMaxMessagesPerPoll;
+        @XmlAttribute
+        Integer minDepth;
+        @XmlAttribute
+        Integer maxDepth;
+        @XmlAttribute
+        String processStrategy;
+        @XmlAttribute
+        Boolean startingDirectoryMustExist;
+        @XmlAttribute
+        String pollStrategy;
+        @XmlAttribute
+        Boolean sendEmptyMessageWhenIdle;
+        @XmlAttribute(name = "consumer.bridgeErrorHandler")
+        Boolean consumerBridgeErrorHandler;
+        @XmlAttribute
+        String scheduledExecutorService;
+        @XmlAttribute
+        String scheduler;
+        @XmlAttribute
+        Integer backoffMultipler;
+        @XmlAttribute
+        Integer backoffIdleThreshold;
+        @XmlAttribute
+        Integer backoffErrorThreshold;
 
         @Override
         public String getUri() {
