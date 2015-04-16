@@ -39,44 +39,34 @@ public class FileDefinition {
     public static final class FromFileDefinition extends FromDefinition {
 
         @XmlAttribute(required = true)
-        private String directory;
+        String directory;
         @XmlAttribute
-        private Boolean autoCreate;
+        Boolean autoCreate;
         @XmlAttribute
-        private Integer bufferSize;
+        Integer bufferSize;
         @XmlAttribute
-        private String fileName;
+        String fileName;
         @XmlAttribute
-        private Boolean flatten;
+        Boolean flatten;
         @XmlAttribute
-        private String charset;
+        String charset;
         @XmlAttribute
-        private Boolean copyAndDeleteOnRenameFail;
+        Boolean copyAndDeleteOnRenameFail;
         @XmlAttribute
-        private Boolean renameUsingCopy;
+        Boolean renameUsingCopy;
         @XmlAttribute
-        private Long initialDelay;
+        Long initialDelay;
         @XmlAttribute
-        private Long delay;
+        Long delay;
         @XmlAttribute
-        private Boolean useFixedDelay;
+        Boolean useFixedDelay;
         @XmlAttribute
-        private Boolean delete;
+        Boolean delete;
 
         @Override
         public String getUri() {
             return new UriBuilder("file", directory)
-                    .addQueryParam("autoCreate", autoCreate)
-                    .addQueryParam("bufferSize", bufferSize)
-                    .addQueryParam("fileName", fileName)
-                    .addQueryParam("flatten", flatten)
-                    .addQueryParam("charset", charset)
-                    .addQueryParam("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail)
-                    .addQueryParam("renameUsingCopy", renameUsingCopy)
-                    .addQueryParam("initialDelay", initialDelay)
-                    .addQueryParam("delay", delay)
-                    .addQueryParam("useFixedDelay", useFixedDelay)
-                    .addQueryParam("delete", delete)
+                    .addQueryParamFromDeclaredFields(this)
                     .toString();
         }
     }

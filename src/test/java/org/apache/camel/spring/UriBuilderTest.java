@@ -15,6 +15,10 @@
  */
 package org.apache.camel.spring;
 
+import java.io.StringReader;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import org.junit.Test;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -58,5 +62,65 @@ public class UriBuilderTest {
                 .toString();
 
         assertThat(uri, is("jetty:http://localhost:8089?throwExceptionOnFailure=false"));
+    }
+
+    @Test
+    public void canBuildQueryParamFromFields() throws Exception {
+        String xml = "<jaxbClass xmlns=\"http://example.org/jaxb\""
+                + " value=\"My Val\""
+                + " count=\"100\""
+                + "/>";
+
+        Class<JaxbClass> jaxbType = JaxbClass.class;
+        JaxbClass instance = jaxbType.cast((JAXBContext.newInstance(jaxbType))
+                .createUnmarshaller()
+                .unmarshal(new StringReader(xml)));
+
+        String uri = new UriBuilder("direct", "start")
+                .addQueryParamFromDeclaredFields(instance)
+                .toString();
+        assertThat(uri, is("direct:start?count=100&value=My Val"));
+    }
+
+    /**
+     * A required attribute cannot be a (optional) query param, right?
+     */
+    @Test
+    public void shouldExcludeRequireFields() throws Exception {
+        String xml = "<jaxbClassWithRequired xmlns=\"http://example.org/jaxb/required\""
+                + " value=\"My Val\""
+                + " count=\"100\""
+                + " valid=\"true\""
+                + "/>";
+
+        Class<JaxbClassWithRequired> jaxbType = JaxbClassWithRequired.class;
+        JaxbClassWithRequired instance = jaxbType.cast((JAXBContext.newInstance(jaxbType))
+                .createUnmarshaller()
+                .unmarshal(new StringReader(xml)));
+
+        String uri = new UriBuilder("direct", "start")
+                .addQueryParamFromDeclaredFields(instance)
+                .toString();
+        assertThat(uri, is("direct:start?count=100&value=My Val"));
+    }
+
+    @XmlRootElement(namespace = "http://example.org/jaxb")
+    private static final class JaxbClass {
+
+        @XmlAttribute
+        String value;
+        @XmlAttribute
+        Integer count;
+    }
+
+    @XmlRootElement(namespace = "http://example.org/jaxb/required")
+    private static final class JaxbClassWithRequired {
+
+        @XmlAttribute(required = true)
+        Boolean valid;
+        @XmlAttribute
+        String value;
+        @XmlAttribute
+        Integer count;
     }
 }

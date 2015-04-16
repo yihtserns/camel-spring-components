@@ -15,18 +15,25 @@
  */
 package org.apache.camel.spring;
 
+import java.lang.reflect.Field;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author yihtserns
  */
+@XmlTransient // Don't schemagen me
 class UriBuilder {
 
-    private Map<String, String> queryKey2Value = new LinkedHashMap<String, String>();
+    /**
+     * Using TreeMap for more predictable query param order - easier to assert.
+     */
+    private Map<String, String> queryKey2Value = new TreeMap<String, String>();
     private String scheme;
     private String hierarchicalPart;
 
@@ -38,6 +45,23 @@ class UriBuilder {
     public UriBuilder addQueryParam(String key, Object value) {
         if (value != null) {
             queryKey2Value.put(key, value.toString());
+        }
+
+        return this;
+    }
+
+    public UriBuilder addQueryParamFromDeclaredFields(Object instance) {
+        try {
+            for (Field field : instance.getClass().getDeclaredFields()) {
+                XmlAttribute attribute = field.getAnnotation(XmlAttribute.class);
+                if (attribute.required()) {
+                    // query params are optional; a required attribute wouldn't be a query param
+                    continue;
+                }
+                addQueryParam(field.getName(), field.get(instance));
+            }
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException(ex);
         }
 
         return this;

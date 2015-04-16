@@ -52,7 +52,7 @@ public class FileDefinitionTest {
     }
 
     @Test
-    public void shouldConvertAllAttributesToUri() throws Exception {
+    public void shouldConvertAllFromFileAttributesToUri() throws Exception {
         JAXBContext ctx = JAXBContext.newInstance(FromFileDefinition.class);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
 
@@ -75,14 +75,14 @@ public class FileDefinitionTest {
         assertThat(definition.getUri(), is("file:c:/temp"
                 + "?autoCreate=true"
                 + "&bufferSize=1024"
-                + "&fileName=myfile"
-                + "&flatten=true"
                 + "&charset=UTF-8"
                 + "&copyAndDeleteOnRenameFail=true"
-                + "&renameUsingCopy=true"
-                + "&initialDelay=60"
                 + "&delay=60"
-                + "&useFixedDelay=true"
-                + "&delete=true"));
+                + "&delete=true"
+                + "&fileName=myfile"
+                + "&flatten=true"
+                + "&initialDelay=60"
+                + "&renameUsingCopy=true"
+                + "&useFixedDelay=true"));
     }
 }
