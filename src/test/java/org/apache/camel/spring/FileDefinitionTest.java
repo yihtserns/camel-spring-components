@@ -15,14 +15,20 @@
  */
 package org.apache.camel.spring;
 
+import java.io.StringReader;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spring.FileDefinition.FromFileDefinition;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * @author yihtserns
@@ -43,5 +49,40 @@ public class FileDefinitionTest {
 
         resultEndpoint.expectedBodiesReceived(expectedContent);
         resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void shouldConvertAllAttributesToUri() throws Exception {
+        JAXBContext ctx = JAXBContext.newInstance(FromFileDefinition.class);
+        Unmarshaller unmarshaller = ctx.createUnmarshaller();
+
+        String xml = "<file xmlns=\"http://camel.apache.org/schema/spring/consumers\""
+                + " directory=\"c:/temp\""
+                + " autoCreate=\"true\""
+                + " bufferSize=\"1024\""
+                + " fileName=\"myfile\""
+                + " flatten=\"true\""
+                + " charset=\"UTF-8\""
+                + " copyAndDeleteOnRenameFail=\"true\""
+                + " renameUsingCopy=\"true\""
+                + " initialDelay=\"60\""
+                + " delay=\"60\""
+                + " useFixedDelay=\"true\""
+                + " delete=\"true\""
+                + "/>";
+        FromFileDefinition definition = (FromFileDefinition) unmarshaller.unmarshal(new StringReader(xml));
+
+        assertThat(definition.getUri(), is("file:c:/temp"
+                + "?autoCreate=true"
+                + "&bufferSize=1024"
+                + "&fileName=myfile"
+                + "&flatten=true"
+                + "&charset=UTF-8"
+                + "&copyAndDeleteOnRenameFail=true"
+                + "&renameUsingCopy=true"
+                + "&initialDelay=60"
+                + "&delay=60"
+                + "&useFixedDelay=true"
+                + "&delete=true"));
     }
 }

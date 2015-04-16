@@ -41,16 +41,43 @@ public class FileDefinition {
         @XmlAttribute(required = true)
         private String directory;
         @XmlAttribute
+        private Boolean autoCreate;
+        @XmlAttribute
+        private Integer bufferSize;
+        @XmlAttribute
+        private String fileName;
+        @XmlAttribute
+        private Boolean flatten;
+        @XmlAttribute
+        private String charset;
+        @XmlAttribute
+        private Boolean copyAndDeleteOnRenameFail;
+        @XmlAttribute
+        private Boolean renameUsingCopy;
+        @XmlAttribute
+        private Long initialDelay;
+        @XmlAttribute
+        private Long delay;
+        @XmlAttribute
+        private Boolean useFixedDelay;
+        @XmlAttribute
         private Boolean delete;
 
         @Override
         public String getUri() {
-            StringBuilder sb = new StringBuilder("file://").append(directory);
-            if (delete != null) {
-                sb.append("?delete=").append(delete);
-            }
-
-            return sb.toString();
+            return new UriBuilder("file", directory)
+                    .addQueryParam("autoCreate", autoCreate)
+                    .addQueryParam("bufferSize", bufferSize)
+                    .addQueryParam("fileName", fileName)
+                    .addQueryParam("flatten", flatten)
+                    .addQueryParam("charset", charset)
+                    .addQueryParam("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail)
+                    .addQueryParam("renameUsingCopy", renameUsingCopy)
+                    .addQueryParam("initialDelay", initialDelay)
+                    .addQueryParam("delay", delay)
+                    .addQueryParam("useFixedDelay", useFixedDelay)
+                    .addQueryParam("delete", delete)
+                    .toString();
         }
     }
 
