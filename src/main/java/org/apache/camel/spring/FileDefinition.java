@@ -156,7 +156,7 @@ public class FileDefinition {
 
         @Override
         public String getUri() {
-            return new UriBuilder("file", directory)
+            return new UriBuilder(LOCAL_NAME, directory)
                     .addQueryParamFromDeclaredFields(this)
                     .toString();
         }
