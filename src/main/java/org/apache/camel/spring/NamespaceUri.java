@@ -15,10 +15,13 @@
  */
 package org.apache.camel.spring;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 /**
  *
  * @author yihtserns
  */
+@XmlTransient // Don't schemagen me
 public interface NamespaceUri {
 
     String CONSUMERS = "http://camel.apache.org/schema/spring/consumers";
