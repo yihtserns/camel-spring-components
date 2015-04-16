@@ -174,11 +174,47 @@ public class FileDefinition {
         }
 
         @XmlAttribute(required = true)
-        private String directory;
+        String directory;
+        @XmlAttribute
+        Boolean autoCreate;
+        @XmlAttribute
+        Integer bufferSize;
+        @XmlAttribute
+        String fileName;
+        @XmlAttribute
+        Boolean flatten;
+        @XmlAttribute
+        String charset;
+        @XmlAttribute
+        Boolean copyAndDeleteOnRenameFail;
+        @XmlAttribute
+        Boolean renameUsingCopy;
+        @XmlAttribute
+        FileExistStrategy fileExist;
+        @XmlAttribute
+        String tempPrefix;
+        @XmlAttribute
+        String tempFileName;
+        @XmlAttribute
+        String moveExisting;
+        @XmlAttribute
+        Boolean keepLastModified;
+        @XmlAttribute
+        Boolean eagerDeleteTargetFile;
+        @XmlAttribute
+        String doneFileName;
+        @XmlAttribute
+        Boolean allowNullBody;
+        @XmlAttribute
+        Boolean forceWrites;
+        @XmlAttribute
+        String chmod;
 
         @Override
         public String getUri() {
-            return "file://" + directory;
+            return new UriBuilder(LOCAL_NAME, directory)
+                    .addQueryParamFromDeclaredFields(this)
+                    .toString();
         }
     }
 }
