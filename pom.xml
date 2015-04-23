@@ -201,6 +201,43 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>Add Component Definitions to existing jaxb.index</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <target>
+                                <property name="crlf" value="${line.separator}"/>
+                                <property name="antrun.directory" value="${project.build.directory}/antrun"/>
+                                <property name="jaxbIndex.filePath" value="org/apache/camel/spring/jaxb.index"/>
+                                <property name="definition.file" value="FileDefinition$FromFileDefinition${crlf}FileDefinition$ToFileDefinition"/>
+                                <property name="definition.http" value="HttpDefinition$ToHttpDefinition"/>
+                                <property name="definition.jetty" value="JettyDefinition$FromJettyDefinition${crlf}JettyDefinition$ToJettyDefinition"/>
+                                <dependencyfilesets prefix="deps."/>
+
+                                <unzip dest="${antrun.directory}/camel-spring">
+                                    <fileset refid="deps.org.apache.camel:camel-spring:jar"/>
+                                </unzip>
+
+                                <copy file="${antrun.directory}/camel-spring/${jaxbIndex.filePath}"
+                                      tofile="${project.build.outputDirectory}/${jaxbIndex.filePath}"/>
+
+                                <!-- TODO: Hopefully can auto-generate this -->
+                                <echo message="${crlf}## Extensions hack${crlf}${definition.file}${crlf}${definition.http}${crlf}${definition.jetty}"
+                                      file="${project.build.outputDirectory}/${jaxbIndex.filePath}"
+                                      append="true"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
