@@ -16,9 +16,11 @@
 package org.apache.camel.spring;
 
 import java.io.StringReader;
+import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.apache.camel.model.ProcessorDefinition;
 import org.junit.Test;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,6 +35,13 @@ public class UriBuilderTest {
         String uri = new UriBuilder("jetty", "http://localhost:8089").toString();
 
         assertThat(uri, is("jetty:http://localhost:8089"));
+    }
+
+    @Test
+    public void canBuildUriWithCombinedSchemeAndHierarchicalPart() {
+        String uri = new UriBuilder("jetty:http://localhost:8089").toString();
+
+        assertThat(uri, is(uri));
     }
 
     @Test
@@ -123,6 +132,48 @@ public class UriBuilderTest {
 
     }
 
+    @Test
+    public void canBuildUriWithDynamicAttributes() throws Exception {
+        String xml = "<jaxbClassWithDynamicAttributes xmlns=\"http://example.org/jaxb\""
+                + " xmlns:dyn=\"http://camel.apache.org/schema/spring/dynamic-attributes\""
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xmlns:beans=\"http://www.springframework.org/schema/beans\""
+                + " dyn:attr1=\"First\""
+                + " dyn:attr2=\"Second\""
+                + " xsi:nonAttr1=\"Skip this\""
+                + " beans:nonAttr2=\"Skip this too\""
+                + "/>";
+
+        Class<JaxbClassWithDynamicAttributes> jaxbType = JaxbClassWithDynamicAttributes.class;
+        JaxbClassWithDynamicAttributes instance = jaxbType.cast((JAXBContext.newInstance(jaxbType)
+                .createUnmarshaller()
+                .unmarshal(new StringReader(xml))));
+
+        String uri = new UriBuilder("direct", "start")
+                .addQueryParamFromDynamicAttributes(instance)
+                .toString();
+        assertThat(uri, is("direct:start?attr1=First&attr2=Second"));
+    }
+
+    @Test
+    public void shouldNotFailWhenThereIsNoDynamicAttribute() throws Exception {
+        String xml = "<jaxbClassWithDynamicAttributes xmlns=\"http://example.org/jaxb\""
+                + " xmlns:dyn=\"http://camel.apache.org/schema/spring/dynamic-attributes\""
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xmlns:beans=\"http://www.springframework.org/schema/beans\""
+                + "/>";
+
+        Class<JaxbClassWithDynamicAttributes> jaxbType = JaxbClassWithDynamicAttributes.class;
+        JaxbClassWithDynamicAttributes instance = jaxbType.cast((JAXBContext.newInstance(jaxbType)
+                .createUnmarshaller()
+                .unmarshal(new StringReader(xml))));
+
+        String uri = new UriBuilder("direct", "start")
+                .addQueryParamFromDynamicAttributes(instance)
+                .toString();
+        assertThat(uri, is("direct:start"));
+    }
+
     @XmlRootElement(namespace = "http://example.org/jaxb")
     private static final class JaxbClass {
 
@@ -150,5 +201,19 @@ public class UriBuilderTest {
         String value;
         @XmlAttribute
         Integer count;
+    }
+
+    @XmlRootElement(namespace = "http://example.org/jaxb")
+    private static final class JaxbClassWithDynamicAttributes extends ProcessorDefinition {
+
+        @Override
+        public List getOutputs() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public boolean isOutputSupported() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
 }

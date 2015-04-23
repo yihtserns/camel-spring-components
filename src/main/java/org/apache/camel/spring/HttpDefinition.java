@@ -30,12 +30,12 @@ import org.apache.camel.model.ToDefinition;
 @XmlTransient
 public class HttpDefinition {
 
-    @XmlRootElement(name = ToHttpDefinition.LOCAL_NAME, namespace = NamespaceUri.PRODUCERS)
+    private static final String LOCAL_NAME = "http";
+
+    @XmlRootElement(name = LOCAL_NAME, namespace = NamespaceUri.PRODUCERS)
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(namespace = NamespaceUri.PRODUCERS)
     public static final class ToHttpDefinition extends ToDefinition {
-
-        private static final String LOCAL_NAME = "http";
 
         /**
          * E.g.
@@ -47,29 +47,32 @@ public class HttpDefinition {
          * </ul>
          */
         @XmlAttribute(required = true)
-        private String url;
+        String url;
         @XmlAttribute
-        private Boolean disableStreamCache;
+        Boolean throwExceptionOnFailure;
+        @XmlAttribute
+        Boolean bridgeEndpoint;
+        @XmlAttribute
+        Boolean disableStreamCache;
+        @XmlAttribute
+        String httpBinding;
+        @XmlAttribute
+        String httpClientConfigurer;
+        @XmlAttribute
+        String clientConnectionManager;
+        @XmlAttribute
+        Boolean transferException;
+        @XmlAttribute
+        String headerFilterStrategy;
+        @XmlAttribute
+        String urlRewrite;
 
         @Override
         public String getUri() {
-            StringBuilder sb = new StringBuilder(url);
-            if (disableStreamCache != null) {
-                sb.append("disableStreamCache=").append(disableStreamCache);
-            }
-
-            return sb.toString();
+            return new UriBuilder(url)
+                    .addQueryParamFromDeclaredFields(this)
+                    .addQueryParamFromDynamicAttributes(this)
+                    .toString();
         }
-
-        @Override
-        public void setRef(String ref) {
-            throw new UnsupportedOperationException("'ref' is read-only property");
-        }
-
-        @Override
-        public void setUri(String uri) {
-            throw new UnsupportedOperationException("'uri' is read-only property");
-        }
-
     }
 }

@@ -15,16 +15,15 @@
  */
 package org.apache.camel.spring;
 
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
+ * Just to generate {@value NamespaceUri#DYNAMIC_ATTRIBUTES} XSD.
  *
  * @author yihtserns
  */
-@XmlTransient // Don't schemagen me
-public interface NamespaceUri {
-
-    String CONSUMERS = "http://camel.apache.org/schema/spring/consumers";
-    String PRODUCERS = "http://camel.apache.org/schema/spring/producers";
-    String DYNAMIC_ATTRIBUTES = "http://camel.apache.org/schema/spring/dynamic-attributes";
+@XmlRootElement(name = "dynamic-attribute", namespace = NamespaceUri.DYNAMIC_ATTRIBUTES)
+@XmlType(namespace = NamespaceUri.DYNAMIC_ATTRIBUTES)
+public abstract class DynamicAttributeDefinition {
 }

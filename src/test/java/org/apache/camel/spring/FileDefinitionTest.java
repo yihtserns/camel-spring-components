@@ -15,15 +15,6 @@
  */
 package org.apache.camel.spring;
 
-import java.io.StringReader;
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -36,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import org.xml.sax.SAXException;
+import static org.apache.camel.spring.XmlUtil.*;
 
 /**
  * @author yihtserns
@@ -217,24 +208,5 @@ public class FileDefinitionTest {
                 + "&renameUsingCopy=true"
                 + "&tempFileName=temp-$simple{file:name:ext}"
                 + "&tempPrefix=temp-"));
-    }
-
-    private static <T> T unmarshal(String xml, Class<T> type) throws SAXException, JAXBException {
-        JAXBContext ctx = JAXBContext.newInstance(type);
-        Unmarshaller unmarshaller = ctx.createUnmarshaller();
-        unmarshaller.setSchema(getSchema());
-
-        return type.cast(unmarshaller.unmarshal(new StringReader(xml)));
-    }
-
-    private static Schema getSchema() throws SAXException {
-        ClassLoader classLoader = FileDefinitionTest.class.getClassLoader();
-        Source[] schemaSources = {
-            new StreamSource(classLoader.getResourceAsStream("camel-spring.xsd")),
-            new StreamSource(classLoader.getResourceAsStream("camel-spring-consumers-2.15.0.xsd")),
-            new StreamSource(classLoader.getResourceAsStream("camel-spring-producers-2.15.0.xsd"))
-        };
-
-        return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(schemaSources);
     }
 }

@@ -44,6 +44,7 @@
         <camel.version>2.15.0</camel.version>
         <consumers.filename>camel-spring-consumers-${camel.version}.xsd</consumers.filename>
         <producers.filename>camel-spring-producers-${camel.version}.xsd</producers.filename>
+        <dynattr.filename>camel-spring-dynamic-attributes-${camel.version}.xsd</dynattr.filename>
     </properties>
 
     <dependencies>
@@ -128,6 +129,11 @@
                                     <toFile>${producers.filename}</toFile>
                                 </schema>
                                 <schema>
+                                    <uri>http://camel.apache.org/schema/spring/dynamic-attributes</uri>
+                                    <toPrefix>dynattr</toPrefix>
+                                    <toFile>${dynattr.filename}</toFile>
+                                </schema>
+                                <schema>
                                     <uri>http://camel.apache.org/schema/spring</uri>
                                     <toPrefix>camel</toPrefix>
                                     <toFile>camel-spring.xsd</toFile>
@@ -166,6 +172,31 @@
                                     <outputDir>${project.build.outputDirectory}</outputDir>
                                 </transformationSet>
                             </transformationSets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <id>Copy XSD schemas to output directory</id>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}/generated-resources/schemagen</directory>
+                                    <includes>
+                                        <include>${dynattr.filename}</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

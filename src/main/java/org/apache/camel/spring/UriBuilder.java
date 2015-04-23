@@ -22,6 +22,8 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.namespace.QName;
+import org.apache.camel.model.ProcessorDefinition;
 
 /**
  *
@@ -39,12 +41,14 @@ class UriBuilder {
      * Using TreeMap for more predictable query param order - easier to assert.
      */
     private Map<String, String> queryKey2Value = new TreeMap<String, String>();
-    private String scheme;
-    private String hierarchicalPart;
+    private String schemeAndHierarchicalPart;
 
     public UriBuilder(String scheme, String hierarchicalPart) {
-        this.scheme = scheme;
-        this.hierarchicalPart = hierarchicalPart;
+        this(scheme + ":" + hierarchicalPart);
+    }
+
+    public UriBuilder(String schemeAndHierarchicalPart) {
+        this.schemeAndHierarchicalPart = schemeAndHierarchicalPart;
     }
 
     public UriBuilder addQueryParam(String key, Object value) {
@@ -75,6 +79,24 @@ class UriBuilder {
         return this;
     }
 
+    public UriBuilder addQueryParamFromDynamicAttributes(ProcessorDefinition definition) {
+        Map<QName, String> qname2Value = definition.getOtherAttributes();
+        if (qname2Value != null) {
+            for (Entry<QName, String> entrySet : qname2Value.entrySet()) {
+                QName qname = entrySet.getKey();
+
+                if (NamespaceUri.DYNAMIC_ATTRIBUTES.equals(qname.getNamespaceURI())) {
+                    String queryParamName = qname.getLocalPart();
+                    String queryParamValue = entrySet.getValue();
+
+                    addQueryParam(queryParamName, queryParamValue);
+                }
+            }
+        }
+
+        return this;
+    }
+
     /**
      * @param attribute to be checked
      * @return {@code false} if {@link XmlAttribute#name()} is {@value #DEFAULT_ATTRIBUTE_NAME}, {@code true} otherwise
@@ -85,7 +107,7 @@ class UriBuilder {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(scheme).append(":").append(hierarchicalPart);
+        StringBuilder sb = new StringBuilder(schemeAndHierarchicalPart);
         if (!queryKey2Value.isEmpty()) {
             sb.append('?');
 
