@@ -15,7 +15,6 @@
  */
 package org.apache.camel.spring;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -23,7 +22,6 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author yihtserns
  */
-@XmlRootElement(name = "dynamic-attribute", namespace = NamespaceUri.DYNAMIC_ATTRIBUTES)
 @XmlType(namespace = NamespaceUri.DYNAMIC_ATTRIBUTES)
 public abstract class DynamicAttributeDefinition {
 }
