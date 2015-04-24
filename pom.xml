@@ -229,14 +229,34 @@
                                 <copy file="${antrun.directory}/camel-spring/${jaxbIndex.filePath}"
                                       tofile="${project.build.outputDirectory}/${jaxbIndex.filePath}"/>
 
-                                <!-- TODO: Hopefully can auto-generate this -->
-                                <echo message="${crlf}## Extensions hack${crlf}${definition.file}${crlf}${definition.http}${crlf}${definition.jetty}"
-                                      file="${project.build.outputDirectory}/${jaxbIndex.filePath}"
-                                      append="true"/>
+                                <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath"/>
+                                <groovy><![CDATA[
+                                    def annoDb = new org.scannotation.AnnotationDB()
+                                    annoDb.scanArchives(new File(properties.'project.build.outputDirectory').toURI().toURL())
+
+                                    def fullyQualifiedClassNames = annoDb.annotationIndex.'javax.xml.bind.annotation.XmlRootElement'
+                                    def classNames = fullyQualifiedClassNames.collect { it.substring(it.lastIndexOf('.') + 1) }
+
+                                    def jaxbIndexFile = new File(properties.'project.build.outputDirectory', properties.'jaxbIndex.filePath')
+                                    jaxbIndexFile << "${properties.crlf}## Extensions hack${properties.crlf}${classNames.join(properties.crlf)}"
+                                    ]]>
+                                </groovy>
                             </target>
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.sf.scannotation</groupId>
+                        <artifactId>scannotation</artifactId>
+                        <version>1.0.2</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-ant</artifactId>
+                        <version>2.2.2</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
